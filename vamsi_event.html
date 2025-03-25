@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://img.freepik.com/free-vector/yellow-comic-zoom-lines-background_1017-15136.jpg?ga=GA1.1.462846313.1742925752&semt=ais_hybrid') no-repeat center center/cover;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            animation: fadeIn 1.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        header {
+            background: rgba(0, 0, 0, 0);
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            animation: slideDown 1s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        section {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+            transition: transform 0.3s ease-in-out;
+        }
+        #events {
+            background: #f4f4f4;
+            color: #333;
+        }
+        #event-details {
+            background: #e6f7ff;
+            color: #FFFFFF;
+        }
+        #contact {
+            background: #fff2e6;
+            color: #804000;
+        }
+        section:hover {
+            transform: scale(1.05);
+        }
+        button {
+            background: #ff5733;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        button:disabled {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Event Management</h1>
+    </header>
+    
+    <section id="events">
+        <h2>Upcoming Events</h2>
+        <ul id="event-list"></ul>
+    </section>
+    
+    <section id="event-details">
+        <h2>Event Details</h2>
+        <img id="event-image" src="event-placeholder.jpg" alt="Event Image" width="300">
+        <p id="event-info">Select an event to see details.</p>
+        <p id="countdown"></p>
+        <button id="rsvp-btn" disabled>RSVP</button>
+    </section>
+    
+    <section id="contact">
+        <h2>Contact Organizers</h2>
+        <form id="contact-form">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send</button>
+        </form>
+    </section>
+    
+    <script>
+        const events = [
+            { name: "Tech Conference", date: "2025-04-10T10:00:00", details: "A conference about the latest in tech.", image: "tech-event.jpg", background: "https://a.storyblok.com/f/188325/1920x1280/41e681c422/alexandre-pellaes-6vajp0pscx0-unsplash-1-1.jpg" },
+            { name: "Music Fest", date: "2025-05-15T18:00:00", details: "A festival with various music artists.", image: "music-event.jpg", background: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
+        ];
+        
+        const eventList = document.getElementById("event-list");
+        const eventInfo = document.getElementById("event-info");
+        const countdown = document.getElementById("countdown");
+        const rsvpBtn = document.getElementById("rsvp-btn");
+        const eventImage = document.getElementById("event-image");
+        const eventDetails = document.getElementById("event-details");
+        
+        events.forEach((event, index) => {
+            let li = document.createElement("li");
+            li.textContent = event.name;
+            li.style.cursor = "pointer";
+            li.style.color = "#ff5733";
+            li.style.transition = "color 0.3s, transform 0.3s";
+            li.addEventListener("mouseover", () => { li.style.color = "#ffcc00"; li.style.transform = "scale(1.1)"; });
+            li.addEventListener("mouseout", () => { li.style.color = "#ff5733"; li.style.transform = "scale(1)"; });
+            li.addEventListener("click", () => showEventDetails(index));
+            eventList.appendChild(li);
+        });
+        
+        function showEventDetails(index) {
+            const event = events[index];
+            eventInfo.textContent = event.details;
+            eventImage.src = event.image;
+            rsvpBtn.disabled = false;
+            if (event.background) {
+                eventDetails.style.background = `url('${event.background}') no-repeat center center/cover`;
+            }
+            startCountdown(event.date);
+        }
+        
+        function startCountdown(eventDate) {
+            const targetDate = new Date(eventDate).getTime();
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(interval);
+                    countdown.textContent = "Event has started!";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
